@@ -5,6 +5,8 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: mtolstykh
@@ -13,21 +15,18 @@ import java.util.Map;
  */
 public class Client {
 
-    private static final String EXIT = "exit";
-    private static final String command_bye = "bye";
-    public static final String default_token = "0x-24f";
-    public static final String command_create_game = "create_game";
-    public static final String backend = "10.0.102.53";
-    public static final int port = 8787;
+    private static final Logger logger = Logger.getGlobal();
+
+    public static final String backend = "127.0.0.1";
+//    public static final String backend = "10.0.102.53";
+//    public static final int port = 8787;
+    public static final int port = 23456;
 
     private PrintWriter out = null;
     private BufferedReader in = null;
     private Socket socket = null;
 
-    public static void main(String[] args) {    
-        if (args.length == 0) {
-            System.out.println("Usage: zhelch <server>");
-        }
+    public static void main(String[] args) {
         run(System.in);
     }
 
@@ -46,13 +45,13 @@ public class Client {
                         do {
                             fromServer = in.readLine();
 
-                            System.out.println(fromServer);
-                            if (fromServer.equals(EXIT)) {
+                            System.out.println(">>" + fromServer);
+                            if (fromServer.equals("/exit")) {
                                 break;
                             }
-                        } while (fromServer != null);
+                        } while (true);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.log(Level.WARNING, e.getMessage());
                     }
                 }
             };
@@ -64,6 +63,7 @@ public class Client {
 
     @Override
     protected void finalize() throws Throwable {
+        super.finalize();
         out.close();
         in.close();
         socket.close();

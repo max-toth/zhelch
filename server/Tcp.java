@@ -1,33 +1,24 @@
 package server;
 
-import com.unlocked.server.Channel;
-import sun.rmi.rmic.iiop.ClassPathLoader;
-
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Tcp {
 
-    private static Properties properties;
+    private static final Logger logger = Logger.getGlobal();
+
     private static final String APP_PROPS = "application.properties";
     private static final int CAPACITY = 3;
-    private static Tcp tcp;
+    public static Tcp root;
     private static ServerSocket socket;
 
-    static {
-        properties = new Properties();
-        try {
-
-            properties.load(Tcp.class.getClassLoader().getResourceAsStream(APP_PROPS));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private List<TcpUnit> threads;
+    public static List<Thread> lobby = new ArrayList<Thread>();
 
     public List<TcpUnit> getThreads() {
         return threads;
@@ -40,34 +31,48 @@ public class Tcp {
     public Tcp() {
 
         try {
-            socket = new ServerSocket(Integer.parseInt(properties.getProperty("server.port")));
+            socket = new ServerSocket(23456);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         threads = new ArrayList<TcpUnit>(CAPACITY);
         for (int i = 0; i < CAPACITY; i++) {
-            TcpUnit unit = new TcpUnit(socket);
-            unit.setName("thread_unit_" + (i + 1));
-            threads.add(unit);
+            threads.add(new TcpUnit(socket, "Thread-TcpUnit-" + i));
         }
     }
 
     public static void run() {
-        tcp = new Tcp();
-        for (Thread unit : tcp.getThreads()) {
+        root = new Tcp();
+        for (Thread unit : root.getThreads()) {
             try {
                 unit.start();
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("start " + unit.getName());
+            logger.log(Level.INFO, "start " + unit.getName());
         }
+
+
+        Socket clientSocket = null;
+        try {
+            while (true) {
+                clientSocket = socket.accept();
+                Channel channel = new Channel(clientSocket);
+                channel.setName("Lobby");
+                Thread item = new Thread(channel);
+                item.start();
+                lobby.add(item);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void shutdown() {
-        for (TcpUnit unit : tcp.getThreads()) {
+        for (TcpUnit unit : root.getThreads()) {
             unit.shutdown();
         }
     }

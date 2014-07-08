@@ -23,6 +23,10 @@ public class TcpUnit extends Thread {
     private volatile boolean shutdown = false;
     private String channelName;
 
+    public List<Thread> getThreads() {
+        return threads;
+    }
+
     @Override
     public synchronized void start() {
         if (t == null) {
@@ -43,18 +47,18 @@ public class TcpUnit extends Thread {
 
     @Override
     public void run() {
-        try {
-            while (!shutdown) {
-                Socket clientSocket = socket.accept();
-                Channel channel = new Channel(clientSocket);
-                channel.setName(channelName);
-                Thread item = new Thread(channel);
-                item.start();
-                threads.add(item);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            while (!shutdown) {
+////                Socket clientSocket = socket.accept();
+////                Channel channel = new Channel(clientSocket);
+////                channel.setName(channelName);
+////                Thread item = new Thread(channel);
+////                item.start();
+////                threads.add(item);
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }
