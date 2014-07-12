@@ -20,7 +20,7 @@ public class Client {
     public static final String backend = "127.0.0.1";
 //    public static final String backend = "10.0.102.53";
 //    public static final int port = 8787;
-    public static final int port = 23456;
+    public static final int port = 12990;
 
     private PrintWriter out = null;
     private BufferedReader in = null;
