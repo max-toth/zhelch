@@ -1,4 +1,4 @@
-package server;
+package com.allboxx.server;
 
 /**
  * Created by max_tolstykh on 08/07/14.

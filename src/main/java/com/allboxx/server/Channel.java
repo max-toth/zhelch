@@ -1,9 +1,7 @@
-package server;
+package com.allboxx.server;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,7 +12,7 @@ import java.util.logging.Logger;
  */
 public class Channel extends Thread {
 
-    private static final Logger logger = Logger.getGlobal();
+//    private static final Logger logger = Logger.getGlobal();
     BufferedReader in = null;
     Socket socket;
     OutputStream out;
@@ -46,7 +44,7 @@ public class Channel extends Thread {
                 if (input.startsWith("/list"))
                     list();
 
-                logger.log(Level.SEVERE, input);
+//                logger.log(Level.SEVERE, input);
                 out.write((input + "\n").getBytes());
                 out.flush();
             }

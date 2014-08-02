@@ -1,10 +1,7 @@
-package client;
+package com.allboxx.client;
 
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,12 +12,12 @@ import java.util.logging.Logger;
  */
 public class Client {
 
-    private static final Logger logger = Logger.getGlobal();
+//    private static final Logger logger = Logger.getGlobal();
 
     public static final String backend = "127.0.0.1";
 //    public static final String backend = "10.0.102.53";
-//    public static final int port = 8787;
-    public static final int port = 12990;
+    public static final int port = 8081;
+//    public static final int port = 12990;
 
     private PrintWriter out = null;
     private BufferedReader in = null;
@@ -51,7 +48,7 @@ public class Client {
                             }
                         } while (true);
                     } catch (IOException e) {
-                        logger.log(Level.WARNING, e.getMessage());
+//                        logger.log(Level.WARNING, e.getMessage());
                     }
                 }
             };
