@@ -1,5 +1,7 @@
 package com.allboxx.client.ui;
 
+import com.allboxx.client.WebSocketUIClient;
+
 import javax.swing.*;
 import javax.websocket.Session;
 import java.awt.*;
@@ -13,23 +15,22 @@ import java.io.IOException;
 public class InputContainer extends Container {
     private JTextField textfield;
 
-    public InputContainer(final Session session) {
-        this.textfield = new JTextField(20);
+    public InputContainer() {
+        this.textfield = new JTextField(30);
         this.textfield.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 String text = textfield.getText();
                 try {
-                    session.getBasicRemote().sendText(text);
+                    WebSocketUIClient.session.getBasicRemote().sendText("operator|" + WebSocketUIClient.currentUser + "|" + text);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
                 System.err.println(text);
-
             }
         });
-
+        this.setSize(600, 80);
         this.setLayout(new FlowLayout());
         this.add(this.textfield);
         this.setVisible(true);

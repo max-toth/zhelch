@@ -16,16 +16,44 @@ public class ClientFrame extends JFrame {
     private InputContainer inputContainer;
     private UserContainer userContainer;
 
-    public ClientFrame(Session session) throws HeadlessException {
+    public ClientFrame() throws HeadlessException {
         this.chatContainer = new ChatContainer();
-        this.inputContainer = new InputContainer(session);
+        this.inputContainer = new InputContainer();
         this.userContainer = new UserContainer();
 
         this.setLayout(new FlowLayout());
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.add(this.inputContainer);
+        this.add(chatContainer, BorderLayout.CENTER);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.add(userContainer);
+        this.add(scrollPane, BorderLayout.EAST);
+        this.add(inputContainer, BorderLayout.SOUTH);
         this.setSize(600, 480);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+
+    public ChatContainer getChatContainer() {
+        return chatContainer;
+    }
+
+    public void setChatContainer(ChatContainer chatContainer) {
+        this.chatContainer = chatContainer;
+    }
+
+    public InputContainer getInputContainer() {
+        return inputContainer;
+    }
+
+    public void setInputContainer(InputContainer inputContainer) {
+        this.inputContainer = inputContainer;
+    }
+
+    public UserContainer getUserContainer() {
+        return userContainer;
+    }
+
+    public void setUserContainer(UserContainer userContainer) {
+        this.userContainer = userContainer;
     }
 }
