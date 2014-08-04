@@ -28,7 +28,7 @@ public class UserContainer extends Container {
     }
 
     public void add(User user) {
-        final Label label = new Label(user.getId());
+        final Label label = new Label(user.getAcc());
         label.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -56,7 +56,7 @@ public class UserContainer extends Container {
 
             }
         });
-        labels.put(user.getId(), label);
+        labels.put(user.getAcc(), label);
         this.add(label);
         this.doLayout();
     }

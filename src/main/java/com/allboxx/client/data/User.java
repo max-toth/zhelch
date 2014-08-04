@@ -6,7 +6,7 @@ import java.util.List;
  * Created by max_tolstykh on 03/08/14.
  */
 public class User {
-    private String id;
+    private String acc;
     private List<String> messages;
     private String name;
     private Boolean activated;
@@ -21,12 +21,12 @@ public class User {
         this.phone = phone;
     }
 
-    public String getId() {
-        return id;
+    public String getAcc() {
+        return acc;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setAcc(String acc) {
+        this.acc = acc;
     }
 
     public List<String> getMessages() {

@@ -10,7 +10,7 @@ import java.awt.*;
 public class UserRowContainer extends Container {
     public UserRowContainer(User user) {
         this.setLayout(new FlowLayout());
-        this.add(new Label(user.getId()));
+        this.add(new Label(user.getAcc()));
         this.setVisible(true);
         this.doLayout();
     }
