@@ -1,10 +1,13 @@
 package com.allboxx.client.data;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import java.util.List;
 
 /**
  * Created by max_tolstykh on 03/08/14.
  */
+@JsonIgnoreProperties({"uid", "_id", "__v"})
 public class User {
     private String acc;
     private List<String> messages;

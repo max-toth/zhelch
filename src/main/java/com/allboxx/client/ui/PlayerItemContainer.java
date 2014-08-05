@@ -22,7 +22,7 @@ public class PlayerItemContainer extends Container {
         Dimension size = new Dimension(250, 50);
 
         this.setMaximumSize(size);
-        this.setMaximumSize(size);
+        this.setMinimumSize(size);
         this.setSize(size);
         this.setPreferredSize(size);
         this.setLayout(new GridBagLayout());
@@ -56,9 +56,9 @@ public class PlayerItemContainer extends Container {
         this.add(getPlayerRating(), constraints);
         this.setVisible(true);
 
-        for (Component component : this.getComponents())
-            for (Component c : ((Container) component).getComponents())
-                c.addMouseListener(new PlayerItemAdapter(c));
+//        for (Component component : this.getComponents())
+//            for (Component c : ((Container) component).getComponents())
+////                c.addMouseListener(new PlayerItemAdapter(c, textArea));
 
 //        this.doLayout();
     }

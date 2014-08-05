@@ -1,6 +1,6 @@
 package com.allboxx.client.ui;
 
-import com.allboxx.client.WebSocketUIClient;
+import com.allboxx.client.ClientEndpoint;
 import com.allboxx.client.data.User;
 
 import java.awt.*;
@@ -33,7 +33,7 @@ public class UserContainer extends Container {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Set current user to " + label.getText());
-                WebSocketUIClient.currentUser = label.getText();
+                ClientEndpoint.currentUser = label.getText();
             }
 
             @Override

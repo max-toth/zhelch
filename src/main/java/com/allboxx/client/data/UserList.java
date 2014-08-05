@@ -1,5 +1,7 @@
 package com.allboxx.client.data;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+
 import java.util.List;
 
 /**
@@ -7,6 +9,7 @@ import java.util.List;
  * Date: 04.08.14
  * Time: 15:54
  */
+@JsonAutoDetect
 public class UserList {
     private List<User> users;
 
