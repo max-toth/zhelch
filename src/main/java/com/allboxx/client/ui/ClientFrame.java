@@ -53,10 +53,18 @@ public class ClientFrame extends JFrame {
     public ClientFrame() throws HeadlessException {
         JPanel mainPanel = new JPanel(new FlowLayout());
         JPanel chatAndUsersPane = getChatAndUsersPane();
-        JPanel inputPanel = new JPanel(new BorderLayout(1, 1));
+        JPanel inputPanel = new JPanel(new FlowLayout());
         inputPanel.setPreferredSize(new Dimension(700, 30));
-        final JTextField textField = new JTextField(16);
+        final JTextField textField = new JTextField(50);
         inputPanel.add(textField);
+        JButton reconnect = new JButton("connect");
+        reconnect.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                run();
+            }
+        });
+        inputPanel.add(reconnect);
         textField.addActionListener(new ActionListener() {
 
             @Override
@@ -67,8 +75,7 @@ public class ClientFrame extends JFrame {
                         if (session.isOpen()) {
                             session.getBasicRemote().sendText("operator|" + ClientEndpoint.currentUser + "|" + text);
                             textArea.append("Allboxx: " + text + "\n");
-                        }
-                        else
+                        } else
                             run();
                 } catch (IOException e1) {
                     e1.printStackTrace();
