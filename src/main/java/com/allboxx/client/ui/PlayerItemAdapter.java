@@ -30,18 +30,6 @@ public class PlayerItemAdapter extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent e) {
 
-//        try {
-//            Thread.sleep(0, 1);
-//        } catch (InterruptedException e1) {
-//            e1.printStackTrace();
-//        }
-//
-//        for (int i = 1; i <= parent.getWidth(); i++) {
-//            Container container = parent.getParent();
-//            for (Component c : container.getComponents()) {
-//                c.setBounds(c.getX() - 1, c.getY(), c.getWidth(), c.getHeight());
-//            }
-//        }
         JPanel panel = (JPanel) component;
         System.out.println("Set user uid = " + panel.getToolTipText());
         ClientEndpoint.currentUser = panel.getToolTipText();
@@ -58,7 +46,7 @@ public class PlayerItemAdapter extends MouseAdapter {
 
         textArea.setText("");
         for (String msg : user.getMessages()) {
-            textArea.append(user.getName() + ": " + msg + "\n");
+            textArea.append(msg + "\n");
         }
     }
 

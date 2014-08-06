@@ -23,9 +23,7 @@ public class ClientEndpoint {
     public static String currentUser;
     private ClientFrame clientFrame;
     private String uid;
-
-    public ClientEndpoint() {
-    }
+    private Session session;
 
     public ClientEndpoint(ClientFrame clientFrame, String uid) {
         this.uid = uid;
@@ -37,41 +35,54 @@ public class ClientEndpoint {
     public void onOpen(Session session) {
         System.out.println("Connected to endpoint: " + session.getBasicRemote());
         try {
-            session.getBasicRemote().sendText("uid:" + uid);
+            session.getAsyncRemote().sendText("uid:" + uid);
+            System.out.println(session);
+            if (!session.isOpen())
+                throw new Exception("wtf exception");
+            this.session = session;
         } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @OnMessage
-    public void onMessage(String message) {
-        String prefix_add = "user.add.list:";
-        String prefix_del = "user.del.list:";
+    public void onMessage(String message) throws IOException {
+        System.out.println(message);
+        String prefix_add = "user.connected:";
+        String prefix_del = "user.disconnected:";
+        String prefix_msg = "user.message:";
         String prefix_user_list = "user.list:";
-        if (message.startsWith(prefix_user_list)) {
-            try {
+        try {
+            if (message.startsWith(prefix_user_list)) {
                 System.out.println(message);
-                List<User> userList = objectMapper.readValue(message.substring(prefix_user_list.length()), new TypeReference<ArrayList<User>>() {});
+                List<User> userList = objectMapper.readValue(message.substring(prefix_user_list.length()), new TypeReference<ArrayList<User>>() {
+                });
                 clientFrame.setUsers(userList);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (message.startsWith(prefix_add)) {
-            try {
+            } else if (message.startsWith(prefix_add)) {
                 User user = objectMapper.readValue(message.substring(prefix_add.length()), User.class);
-            } catch (IOException e) {
-                e.printStackTrace();
+                clientFrame.setUser(user);
+            } else if (message.startsWith(prefix_del)) {
+                clientFrame.delUser(message.substring(prefix_del.length()));
+            } else if (message.startsWith(prefix_msg)) {
+                message = message.substring(prefix_msg.length() + 1);
+                System.out.println(message);
+                int i = message.indexOf(':');
+                String userId = "";
+                if (i > 0) {
+                    userId = message.substring(0, i);
+                    if (currentUser == null)
+                        currentUser = userId;
+                    message = message.substring(i + 1);
+                    clientFrame.getTextArea().append(message + "\n");
+                    clientFrame.getUserMap().get(userId).getMessages().add(message);
+                    clientFrame.toFront();
+                }
             }
-        } else if (message.startsWith(prefix_del)) {
-
-        } else {
-            int i = message.indexOf(':');
-            String userId = "";
-            if (i > 0) {
-                userId = message.substring(0, i);
-                if (currentUser == null)
-                    currentUser = userId;
-                clientFrame.getTextArea().append(message.substring(i + 1) + "\n");
-            }
+        } catch (IOException e) {
+            session.close();
+            e.printStackTrace();
         }
     }
 }
