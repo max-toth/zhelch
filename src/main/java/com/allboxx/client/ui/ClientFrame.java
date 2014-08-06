@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -45,7 +46,7 @@ public class ClientFrame extends JFrame {
         if (usersPanel.getComponentCount() > 0)
             usersPanel.removeAll();
         this.users = users;
-        for (User user : this.userMap.values()) {
+        for (User user : this.users) {
             JPanel lp = new JPanel(new GridLayout(0, 1));
             Dimension size = new Dimension(100, 20);
             lp.setPreferredSize(size);
@@ -98,9 +99,9 @@ public class ClientFrame extends JFrame {
     public ClientFrame() {
         JPanel mainPanel = new JPanel(new FlowLayout());
         JPanel chatAndUsersPane = getChatAndUsersPane();
-        JPanel inputPanel = new JPanel(new BorderLayout(1, 1));
+        JPanel inputPanel = new JPanel(new FlowLayout());
         inputPanel.setPreferredSize(new Dimension(700, 30));
-        final JTextField textField = new JTextField(16);
+        final JTextField textField = new JTextField(50);        
         JButton button = new JButton("refresh");
         button.addActionListener(new ActionListener() {
             @Override
@@ -188,7 +189,6 @@ public class ClientFrame extends JFrame {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(new ClientEndpoint(this, uid), URI.create(ws_server));
-//            wait4TerminateSignal();
         } catch (Exception e) {
             e.printStackTrace();
         }
