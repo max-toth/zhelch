@@ -30,9 +30,8 @@ public class ClientFrame extends JFrame {
     public static final String AMAZON1 = "54.200.85.175";
     public static final String AMAZON2 = "ec2-54-200-85-175.us-west-2.compute.amazonaws.com";
     public static final String AMAZON3 = "10.0.102.53";
-    public static final String AMAZON4 = "54.187.230.76";
 
-    public static String server = AMAZON3;
+    public static String server = ALLBOXX;
 
     private Map<String, User> userMap = new HashMap<String, User>();
     private JPanel usersPanel;
@@ -55,15 +54,20 @@ public class ClientFrame extends JFrame {
 
         for (User user : users) {
             userMap.put(user.getAcc(), user);
-            JPanel lp = new JPanel(new GridLayout(0, 1));
-            Dimension size = new Dimension(180, 20);
+            JPanel lp = new JPanel();
+            lp.setLayout(new BoxLayout(lp, BoxLayout.Y_AXIS));
+            Dimension size = new Dimension(180, 30);
             lp.setPreferredSize(size);
             lp.setSize(size);
             lp.setMaximumSize(size);
             lp.setMinimumSize(size);
             lp.setToolTipText(user.getAcc());
             lp.addMouseListener(new PlayerItemAdapter(lp, textArea, user));
-            lp.add(new JLabel(user.getName() + ": " + user.getPhone()));
+            lp.add(new JLabel(user.getName()), CENTER_ALIGNMENT);
+            JLabel phoneLabel = new JLabel(user.getPhone());
+            phoneLabel.setFont(new Font("Courier New", Font.ITALIC, 11));
+            lp.add(phoneLabel, CENTER_ALIGNMENT);
+            lp.setBorder(BorderFactory.createTitledBorder(""));
             usersPanel.add(lp);
             usersPanel.validate();
             usersPanel.repaint();
@@ -89,15 +93,20 @@ public class ClientFrame extends JFrame {
     public void setUser(User user) {
         userMap.put(user.getAcc(), user);
         delUser(user.getAcc());
-        JPanel lp = new JPanel(new GridLayout(0, 1));
-        Dimension size = new Dimension(180, 20);
+        JPanel lp = new JPanel();
+        lp.setLayout(new BoxLayout(lp, BoxLayout.Y_AXIS));
+        Dimension size = new Dimension(180, 30);
         lp.setPreferredSize(size);
         lp.setSize(size);
         lp.setMaximumSize(size);
         lp.setMinimumSize(size);
         lp.setToolTipText(user.getAcc());
         lp.addMouseListener(new PlayerItemAdapter(lp, textArea, user));
-        lp.add(new JLabel(user.getName() + ": " + user.getPhone()));
+        lp.add(new JLabel(user.getName()), CENTER_ALIGNMENT);
+        JLabel phoneLabel = new JLabel(user.getPhone());
+        phoneLabel.setFont(new Font("Courier New", Font.ITALIC, 11));
+        lp.add(phoneLabel, CENTER_ALIGNMENT);
+        lp.setBorder(BorderFactory.createTitledBorder(""));
         usersPanel.add(lp);
         usersPanel.validate();
         usersPanel.repaint();
@@ -130,9 +139,9 @@ public class ClientFrame extends JFrame {
             }
         });
 
-        String[] labels = new String[]{AMAZON1, AMAZON2, AMAZON3, AMAZON4, ALLBOXX};
+        String[] labels = new String[]{ALLBOXX, AMAZON1, AMAZON2, AMAZON3};
         JComboBox comboBox = new JComboBox<String>(labels);
-        comboBox.setSelectedIndex(2);
+        comboBox.setSelectedIndex(0);
         comboBox.setPreferredSize(new Dimension(600, 30));
         comboBox.addActionListener(new ActionListener() {
             @Override
@@ -181,7 +190,7 @@ public class ClientFrame extends JFrame {
         mainPanel.add(inputPanel, Component.CENTER_ALIGNMENT);
         add(mainPanel);
 
-        this.setSize(800, 800);
+        this.setSize(805, 800);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
