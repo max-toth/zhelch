@@ -22,35 +22,43 @@ import java.util.UUID;
  */
 public class ClientFrame extends JFrame {
 
-    private List<User> users = new ArrayList<User>();
+    private static final String uid = UUID.randomUUID().toString();
+    private static final String ws_server_pref = "ws://";
+    private static final String ws_server_suf = ":8081/chat";
 
-    public List<User> getUsers() {
-        return users;
-    }
+    public static final String ALLBOXX = "allboxx.com";
+    public static final String AMAZON1 = "54.200.85.175";
+    public static final String AMAZON2 = "ec2-54-200-85-175.us-west-2.compute.amazonaws.com";
+    public static final String AMAZON3 = "10.0.102.53";
+    public static final String AMAZON4 = "54.187.230.76";
+
+    public static String server = AMAZON3;
 
     private Map<String, User> userMap = new HashMap<String, User>();
+    private JPanel usersPanel;
+    private JScrollPane usersScrollPane;
+    private JTextArea textArea;
+    private Session session;
 
     public Map<String, User> getUserMap() {
         return userMap;
     }
 
-    public void setUserMap(Map<String, User> userMap) {
-        this.userMap = userMap;
+    public JTextArea getTextArea() {
+        return textArea;
     }
 
     public void setUsers(List<User> users) {
-        for (User u: users){
-            userMap.put(u.getAcc(), u);
-        }
 
         if (usersPanel.getComponentCount() > 0)
             usersPanel.removeAll();
-        this.users = users;
-        for (User user : this.users) {
+
+        for (User user : users) {
+            userMap.put(user.getAcc(), user);
             JPanel lp = new JPanel(new GridLayout(0, 1));
-            Dimension size = new Dimension(100, 20);
+            Dimension size = new Dimension(180, 20);
             lp.setPreferredSize(size);
-            lp.setSize(new Dimension(100, 100));
+            lp.setSize(size);
             lp.setMaximumSize(size);
             lp.setMinimumSize(size);
             lp.setToolTipText(user.getAcc());
@@ -66,7 +74,7 @@ public class ClientFrame extends JFrame {
 
     public void delUser(String user) {
         userMap.remove(user);
-        for(Component c: usersPanel.getComponents()){
+        for (Component c : usersPanel.getComponents()) {
             JPanel p = (JPanel) c;
             if (p.getToolTipText().equals(user)) {
                 usersPanel.remove(c);
@@ -80,10 +88,11 @@ public class ClientFrame extends JFrame {
 
     public void setUser(User user) {
         userMap.put(user.getAcc(), user);
+        delUser(user.getAcc());
         JPanel lp = new JPanel(new GridLayout(0, 1));
-        Dimension size = new Dimension(100, 20);
+        Dimension size = new Dimension(180, 20);
         lp.setPreferredSize(size);
-        lp.setSize(new Dimension(100, 100));
+        lp.setSize(size);
         lp.setMaximumSize(size);
         lp.setMinimumSize(size);
         lp.setToolTipText(user.getAcc());
@@ -97,13 +106,19 @@ public class ClientFrame extends JFrame {
     }
 
     public ClientFrame() {
-        JPanel mainPanel = new JPanel(new FlowLayout());
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         JPanel chatAndUsersPane = getChatAndUsersPane();
-        JPanel inputPanel = new JPanel(new FlowLayout());
-        inputPanel.setPreferredSize(new Dimension(700, 30));
-        final JTextField textField = new JTextField(50);        
-        JButton button = new JButton("refresh");
-        button.addActionListener(new ActionListener() {
+        JPanel inputPanel = new JPanel(new GridLayout(2, 1));
+        inputPanel.setPreferredSize(new Dimension(800, 100));
+        final JTextField textField = new JTextField();
+        textField.setPreferredSize(new Dimension(600, 30));
+        JButton connect = new JButton("connect");
+        connect.setPreferredSize(new Dimension(100, 30));
+        JButton send = new JButton("send");
+        send.setPreferredSize(new Dimension(100, 30));
+        connect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -114,8 +129,19 @@ public class ClientFrame extends JFrame {
                 }
             }
         });
-        inputPanel.add(textField);
-        inputPanel.add(button);
+
+        String[] labels = new String[]{AMAZON1, AMAZON2, AMAZON3, AMAZON4, ALLBOXX};
+        JComboBox comboBox = new JComboBox<String>(labels);
+        comboBox.setSelectedIndex(2);
+        comboBox.setPreferredSize(new Dimension(600, 30));
+        comboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox cb = (JComboBox) e.getSource();
+                server = (String) cb.getSelectedItem();
+            }
+        });
+
         textField.addActionListener(new ActionListener() {
 
             @Override
@@ -126,8 +152,7 @@ public class ClientFrame extends JFrame {
                         if (session.isOpen()) {
                             session.getBasicRemote().sendText("operator|" + ClientEndpoint.currentUser + "|" + text);
                             textArea.append("Allboxx: " + text + "\n\n");
-                        }
-                        else
+                        } else
                             run();
                 } catch (IOException e1) {
                     e1.printStackTrace();
@@ -136,27 +161,36 @@ public class ClientFrame extends JFrame {
                 textField.setText("");
             }
         });
+        send.addActionListener(textField.getActionListeners()[0]);
+
+        JPanel inp = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        inp.setPreferredSize(new Dimension(800, 30));
+
+        inp.add(textField);
+        inp.add(send);
+
+        JPanel ref = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ref.setPreferredSize(new Dimension(800, 30));
+        ref.add(comboBox);
+        ref.add(connect);
+
+        inputPanel.add(inp, Component.CENTER_ALIGNMENT);
+        inputPanel.add(ref);
+
         mainPanel.add(chatAndUsersPane);
-        mainPanel.add(inputPanel);
+        mainPanel.add(inputPanel, Component.CENTER_ALIGNMENT);
         add(mainPanel);
 
-        this.setSize(800, 500);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setResizable(false);
-    }
-
-    JPanel usersPanel;
-    JScrollPane usersScrollPane;
-    JTextArea textArea;
-
-    public JTextArea getTextArea() {
-        return textArea;
+        this.pack();
     }
 
     public JPanel getChatAndUsersPane() {
-        JPanel chatAndUsersPane = new JPanel(new GridLayout(1, 2));
+        JPanel chatAndUsersPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
         textArea = new JTextArea();
         textArea.setFont(new Font("Serif", Font.ITALIC, 11));
         textArea.setLineWrap(true);
@@ -164,42 +198,30 @@ public class ClientFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(400, 430));
+        scrollPane.setPreferredSize(new Dimension(600, 700));
         textArea.setEditable(false);
-        chatAndUsersPane.add(scrollPane);
 
-        usersPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+
+        usersPanel = new JPanel();
+        usersPanel.setLayout(new BoxLayout(usersPanel, BoxLayout.Y_AXIS));
+        Dimension preferredSize = new Dimension(180, 700);
+        usersPanel.setPreferredSize(preferredSize);
         usersScrollPane = new JScrollPane(usersPanel);
-        usersScrollPane.setMaximumSize(new Dimension(100, 430));
+        usersScrollPane.setPreferredSize(preferredSize);
         usersScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        chatAndUsersPane.add(scrollPane);
         chatAndUsersPane.add(usersScrollPane);
 
         return chatAndUsersPane;
     }
 
-    Session session;
-    private static final String uid = UUID.randomUUID().toString();
-//    public static final String AMAZON = "54.200.85.175";
-    public static final String AMAZON = "ec2-54-200-85-175.us-west-2.compute.amazonaws.com";
-    public static final String DEV = "10.0.102.53";
-    private static final String ws_server = "ws://" + AMAZON + ":8081/chat";
-    private static final Object waitLock = new Object();
-
     public void run() {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            session = container.connectToServer(new ClientEndpoint(this, uid), URI.create(ws_server));
+            session = container.connectToServer(new ClientEndpoint(this, uid), URI.create(ws_server_pref + server + ws_server_suf));
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private static void wait4TerminateSignal() {
-        synchronized (waitLock) {
-            try {
-                waitLock.wait();
-            } catch (InterruptedException ignored) {
-            }
         }
     }
 

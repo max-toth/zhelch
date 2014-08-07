@@ -5,9 +5,7 @@ import com.allboxx.client.ui.ClientFrame;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,4 +83,10 @@ public class ClientEndpoint {
             e.printStackTrace();
         }
     }
+
+    @OnClose
+    public void onClose(Session session, CloseReason reason) {
+        System.out.println("Closed, because of " + reason);
+    }
+
 }
