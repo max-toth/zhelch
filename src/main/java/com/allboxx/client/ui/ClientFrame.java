@@ -22,7 +22,6 @@ import java.util.UUID;
  */
 public class ClientFrame extends JFrame {
 
-    private static final String uid = UUID.randomUUID().toString();
     private static final String ws_server_pref = "ws://";
     private static final String ws_server_suf = ":8081/chat";
 
@@ -30,6 +29,8 @@ public class ClientFrame extends JFrame {
     public static final String AMAZON1 = "54.200.85.175";
     public static final String AMAZON2 = "ec2-54-200-85-175.us-west-2.compute.amazonaws.com";
     public static final String AMAZON3 = "10.0.102.53";
+    public static final int user_item_height = 40;
+    public static final int user_item_width = 180;
 
     public static String server = ALLBOXX;
 
@@ -56,7 +57,7 @@ public class ClientFrame extends JFrame {
             userMap.put(user.getAcc(), user);
             JPanel lp = new JPanel();
             lp.setLayout(new BoxLayout(lp, BoxLayout.Y_AXIS));
-            Dimension size = new Dimension(180, 30);
+            Dimension size = new Dimension(user_item_width, user_item_height);
             lp.setPreferredSize(size);
             lp.setSize(size);
             lp.setMaximumSize(size);
@@ -65,7 +66,7 @@ public class ClientFrame extends JFrame {
             lp.addMouseListener(new PlayerItemAdapter(lp, textArea, user));
             lp.add(new JLabel(user.getName()), CENTER_ALIGNMENT);
             JLabel phoneLabel = new JLabel(user.getPhone());
-            phoneLabel.setFont(new Font("Courier New", Font.ITALIC, 11));
+            phoneLabel.setFont(new Font("Courier New", Font.ITALIC, 10));
             lp.add(phoneLabel, CENTER_ALIGNMENT);
             lp.setBorder(BorderFactory.createTitledBorder(""));
             usersPanel.add(lp);
@@ -74,6 +75,17 @@ public class ClientFrame extends JFrame {
         }
         usersScrollPane.validate();
         usersScrollPane.repaint();
+    }
+
+    public void setUserOffline(String user) {
+        for (Component c : usersPanel.getComponents()) {
+            JPanel p = (JPanel) c;
+            if (p.getToolTipText().equals(user)) {
+                p.setBackground(new Color(200, 135, 135));
+                usersPanel.validate();
+                usersPanel.repaint();
+            }
+        }
     }
 
     public void delUser(String user) {
@@ -95,7 +107,7 @@ public class ClientFrame extends JFrame {
         delUser(user.getAcc());
         JPanel lp = new JPanel();
         lp.setLayout(new BoxLayout(lp, BoxLayout.Y_AXIS));
-        Dimension size = new Dimension(180, 30);
+        Dimension size = new Dimension(user_item_width, user_item_height);
         lp.setPreferredSize(size);
         lp.setSize(size);
         lp.setMaximumSize(size);
@@ -104,9 +116,10 @@ public class ClientFrame extends JFrame {
         lp.addMouseListener(new PlayerItemAdapter(lp, textArea, user));
         lp.add(new JLabel(user.getName()), CENTER_ALIGNMENT);
         JLabel phoneLabel = new JLabel(user.getPhone());
-        phoneLabel.setFont(new Font("Courier New", Font.ITALIC, 11));
+        phoneLabel.setFont(new Font("Courier New", Font.ITALIC, 10));
         lp.add(phoneLabel, CENTER_ALIGNMENT);
         lp.setBorder(BorderFactory.createTitledBorder(""));
+        lp.setBackground(new Color(200, 230, 143));
         usersPanel.add(lp);
         usersPanel.validate();
         usersPanel.repaint();
@@ -160,6 +173,7 @@ public class ClientFrame extends JFrame {
                     if (ClientEndpoint.currentUser != null)
                         if (session.isOpen()) {
                             session.getBasicRemote().sendText("operator|" + ClientEndpoint.currentUser + "|" + text);
+                            userMap.get(ClientEndpoint.currentUser).getMessages().add("Allboxx: " + text + "\n\n");
                             textArea.append("Allboxx: " + text + "\n\n");
                         } else
                             run();
@@ -228,7 +242,7 @@ public class ClientFrame extends JFrame {
     public void run() {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            session = container.connectToServer(new ClientEndpoint(this, uid), URI.create(ws_server_pref + server + ws_server_suf));
+            session = container.connectToServer(new ClientEndpoint(this, UUID.randomUUID().toString()), URI.create(ws_server_pref + server + ws_server_suf));
         } catch (Exception e) {
             e.printStackTrace();
         }

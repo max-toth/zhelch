@@ -15,6 +15,7 @@ public class User {
     private Boolean activated;
     private String code;
     private String phone;
+    private String auth;
 
     public String getPhone() {
         return phone;

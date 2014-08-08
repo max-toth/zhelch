@@ -33,8 +33,9 @@ public class ClientEndpoint {
     public void onOpen(Session session) {
         System.out.println("Connected to endpoint: " + session.getBasicRemote());
         try {
-            session.getAsyncRemote().sendText("uid:" + uid);
+            session.getBasicRemote().sendText("uid:" + uid);
             System.out.println(session);
+            Thread.sleep(2000);
             if (!session.isOpen())
                 throw new Exception("wtf exception");
             this.session = session;
@@ -62,7 +63,7 @@ public class ClientEndpoint {
                 User user = objectMapper.readValue(message.substring(prefix_add.length()), User.class);
                 clientFrame.setUser(user);
             } else if (message.startsWith(prefix_del)) {
-                clientFrame.delUser(message.substring(prefix_del.length()));
+                clientFrame.setUserOffline(message.substring(prefix_del.length()));
             } else if (message.startsWith(prefix_msg)) {
                 message = message.substring(prefix_msg.length() + 1);
                 System.out.println(message);
@@ -82,6 +83,11 @@ public class ClientEndpoint {
             session.close();
             e.printStackTrace();
         }
+    }
+
+    @OnError
+    public void error(Session session, Throwable t) {
+        t.printStackTrace();
     }
 
     @OnClose
